@@ -26,7 +26,6 @@
       }
 
       * { box-sizing: border-box; }
-
       html, body { height: 100%; }
 
       body {
@@ -43,11 +42,7 @@
         -moz-osx-font-smoothing: grayscale;
       }
 
-      .container {
-        max-width: 1100px;
-        margin: 6vh auto 8vh;
-        padding: 0 24px;
-      }
+      .container { max-width: 1100px; margin: 6vh auto 8vh; padding: 0 24px; }
 
       .hero {
         position: relative;
@@ -90,20 +85,14 @@
         margin: 14px 0 10px;
         font-size: clamp(28px, 5vw, 46px);
         line-height: 1.08;
-        text-align: center;
         letter-spacing: -0.02em;
-        background: linear-gradient(90deg, #0f2a1e 0%, var(--ink-soft) 60%, var(--accent-600) 120%);
+        background: linear-gradient(90deg, var(--accent-600) 0%, hsl(var(--accent-h), 70%, 45%) 45%, #86efac 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         color: transparent;
+        text-shadow: 0 8px 30px rgba(16, 185, 129, 0.25);
         font-weight: 800;
-      }
-
-      p.subtitle {
-        margin: 0 0 18px;
-        font-size: clamp(14px, 1.8vw, 18px);
-        color: rgba(15, 42, 30, 0.75);
       }
 
       .author {
@@ -115,57 +104,22 @@
 
       .lead {
         margin: 0 0 14px;
-        font-size: clamp(14px, 1.7vw, 17px);
+        font-size: 15px;
+        line-height: 1.7;
         color: rgba(15, 42, 30, 0.78);
+        text-align: justify;
+        text-justify: inter-word;
       }
 
-      .cta {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 6px;
+      p.subtitle {
+        margin: 0 0 18px;
+        font-size: 15px;
+        color: rgba(15, 42, 30, 0.75);
       }
 
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 16px;
-        border-radius: 14px;
-        text-decoration: none;
-        font-weight: 700;
-        letter-spacing: 0.2px;
-        transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
-        will-change: transform;
-        user-select: none;
-      }
-
-      .btn.primary {
-        color: white;
-        background: linear-gradient(180deg, var(--accent-300), var(--accent));
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-        border: 1px solid rgba(16, 185, 129, 0.45);
-      }
-
-      .btn.ghost {
-        color: var(--ink);
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.35));
-        border: 1px solid rgba(15, 42, 30, 0.12);
-        box-shadow: 0 4px 14px rgba(15, 42, 30, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-      }
-
-      .btn:hover { transform: translateY(-1px); }
-      .btn:active { transform: translateY(0); }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 18px;
-        margin-top: 22px;
-      }
-
+      /* Tabs in a single glass card with fixed-height panel area */
+      .tabs { margin-top: 12px; }
       .card {
-        grid-column: span 4;
         position: relative;
         border-radius: var(--radius-lg);
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.60), rgba(255, 255, 255, 0.34));
@@ -173,53 +127,89 @@
         -webkit-backdrop-filter: blur(14px) saturate(160%);
         border: 1px solid var(--glass-border);
         box-shadow: var(--shadow);
-        padding: 18px;
+        padding: 0;
         overflow: hidden;
       }
-
-      .card h3 {
-        margin: 2px 0 8px;
-        font-size: 16px;
-        color: rgba(15, 42, 30, 0.85);
+      .tab-header {
+        padding: 8px 10px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.60), rgba(255, 255, 255, 0.35));
+        border-bottom: 1px solid rgba(15, 42, 30, 0.12);
       }
-
-      .metric {
+      .tab-list {
         display: flex;
-        align-items: baseline;
-        gap: 10px;
-        margin-top: 2px;
-      }
-
-      .metric .value {
-        font-size: 28px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        color: var(--ink);
-      }
-
-      .metric .unit {
-        font-size: 12px;
-        color: rgba(15, 42, 30, 0.60);
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-
-      .pill {
-        display: inline-flex;
-        align-items: center;
+        flex-wrap: wrap;
         gap: 8px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(34, 197, 94, 0.14);
-        color: var(--ink);
-        border: 1px solid rgba(34, 197, 94, 0.32);
-        font-weight: 700;
-        font-size: 12px;
+        margin: 0;
       }
+      .tab {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+      }
+      .tab:hover { transform: translateY(-1px); }
+      .tab:active { transform: translateY(0); }
+      .tab.is-active {
+        color: white;
+        background: linear-gradient(180deg, var(--accent-300), var(--accent));
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        border: 1px solid rgba(16, 185, 129, 0.45);
+      }
+      .tab-panels {
+        padding: 16px 18px;
+        height: auto;            /* will be set to Project Background height by JS */
+        overflow: hidden;        /* keep box size fixed; inner panel scrolls */
+      }
+      .tab-panel {
+        height: 100%;
+        overflow-y: auto;        /* long tabs scroll inside */
+      }
+      .tab-panel[hidden] { display: none; }
 
-      .muted {
-        color: rgba(15, 42, 30, 0.65);
-        font-size: 13px;
+      /* Consistent article typography */
+      .panel-content {
+        font-size: 15px;
+        line-height: 1.7;
+      }
+      .panel-content p,
+      .panel-content li {
+        font-size: inherit;
+        line-height: inherit;
+        text-align: justify;
+        text-justify: inter-word;
+        color: rgba(15, 42, 30, 0.78);
+      }
+      .panel-content ul { margin: 10px 0 0 18px; }
+      .panel-content li { margin: 6px 0; }
+
+      /* Stakeholders list */
+      .role-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .role-item {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.35));
+        border: 1px solid rgba(15, 42, 30, 0.12);
+      }
+      .role { font-weight: 800; color: var(--ink); }
+      .role-details .stakeholders { font-weight: 700; color: rgba(15, 42, 30, 0.9); margin-bottom: 6px; }
+      .role-details .desc { color: rgba(15, 42, 30, 0.78); }
+
+      @media (max-width: 640px) {
+        .role-item { grid-template-columns: 1fr; }
       }
 
       footer {
@@ -229,16 +219,8 @@
         font-size: 12px;
       }
 
-      @media (max-width: 960px) {
-        .card { grid-column: span 6; }
-      }
-
-      @media (max-width: 640px) {
-        .card { grid-column: 1 / -1; }
-      }
-
       @media (prefers-reduced-motion: reduce) {
-        .btn { transition: none; }
+        .tab, .tab-list { transition: none; }
       }
     </style>
   </head>
@@ -247,50 +229,205 @@
       <section class="hero">
         <span class="badge">Project</span>
         <h1 class="title">Credit Card Usage &amp; Fraud Impact Analysis</h1>
-        <p></p>
-        <p></p>
-        <p></p>
         <p class="author">Author: Abdul Ghofar – Data Analyst</p>
         <p class="lead">This repository presents a comprehensive credit card usage and fraud analysis pipeline for RevoBank, aimed at optimizing revenue and minimizing losses from fraudulent transactions. Built with transactional data analytics, segmentation techniques, and advanced data visualization, the project covers transaction performance summaries, gross and net income calculations after fraud, and customer persona development based on spending patterns and fraud risk.</p>
         <p class="lead">The work demonstrates a data-driven approach to identifying high-value customer segments and potential fraud hotspots, supporting both strategic marketing initiatives and risk mitigation efforts for the bank’s performance management team.</p>
-        
-        <div class="cta">
-          <a class="btn primary" href="#">Open Dashboard</a>
-          <a class="btn ghost" href="#">View Dataset</a>
-        </div>
-        <div class="grid">
-          <article class="card">
-            <div class="pill">Usage</div>
-            <h3>Monthly Transactions</h3>
-            <div class="metric">
-              <div class="value">124,580</div>
-              <div class="unit">tx</div>
+        <p class="subtitle">Glassmorphism interface in a soft green palette. Explore transaction patterns, surface anomalies, and quantify the impact of fraud.</p>
+
+        <div class="tabs">
+          <div class="card tab-surface">
+            <div class="tab-header">
+              <div class="tab-list" role="tablist" aria-label="Project sections">
+                <button class="tab is-active" role="tab" id="tab-background" aria-selected="true" aria-controls="panel-background">Project Background</button>
+                <button class="tab" role="tab" id="tab-objective" aria-selected="false" aria-controls="panel-objective">Project Objective</button>
+                <button class="tab" role="tab" id="tab-stakeholders" aria-selected="false" aria-controls="panel-stakeholders">Stakeholders</button>
+                <button class="tab" role="tab" id="tab-scope" aria-selected="false" aria-controls="panel-scope">Project Scope</button>
+                <button class="tab" role="tab" id="tab-problem" aria-selected="false" aria-controls="panel-problem">Problem Statement</button>
+                <button class="tab" role="tab" id="tab-kpis" aria-selected="false" aria-controls="panel-kpis">KPIs</button>
+              </div>
             </div>
-            <p class="muted">Rolling average across the last 30 days.</p>
-          </article>
-          <article class="card">
-            <div class="pill">Risk</div>
-            <h3>Fraud Rate</h3>
-            <div class="metric">
-              <div class="value">0.82%</div>
-              <div class="unit">rate</div>
+
+            <div class="tab-panels">
+              <!-- Project Background -->
+              <section class="tab-panel" id="panel-background" role="tabpanel" aria-labelledby="tab-background">
+                <div class="panel-content">
+                  <p>RevoBank, a leading bank in Indonesia, aims to increase the usage of its credit card products among existing customers. As a data analyst working with the Performance Management (PM) team, the goal is to analyze customer transaction data over the past six months to better understand customer behavior and identify key segments for targeted marketing efforts.</p>
+                  <p>The bank earns revenue from credit card transactions through a Merchant Discount Rate (MDR) fee, which results in a profit margin of 1.5% per transaction amount. However, fraudulent transactions can significantly impact the bank’s net income, as RevoBank absorbs the full cost of any fraud incurred.</p>
+                  <p>This project involves summarizing transaction performance, calculating gross and net income after fraud, and developing user personas based on transaction patterns and fraud risk. The insights generated will support the PM team in creating effective strategies to encourage increased card usage and reduce fraud-related losses.</p>
+                </div>
+              </section>
+
+              <!-- Project Objective -->
+              <section class="tab-panel" id="panel-objective" role="tabpanel" aria-labelledby="tab-objective" hidden>
+                <div class="panel-content">
+                  <p>The primary objective of this project is to analyze the credit card transaction data of RevoBank customers over the past six months to:</p>
+                  <ul>
+                    <li>Summarize overall sales performance and revenue generated from credit card transactions.</li>
+                    <li>Assess the impact of fraudulent transactions on the bank’s net income.</li>
+                    <li>Segment customers based on their transaction behavior, usage frequency, and fraud risk.</li>
+                    <li>Develop detailed user personas to help the Performance Management team target marketing efforts effectively.</li>
+                    <li>Provide actionable insights and recommendations to increase credit card usage and minimize fraud-related losses.</li>
+                  </ul>
+                </div>
+              </section>
+
+              <!-- Stakeholders -->
+              <section class="tab-panel" id="panel-stakeholders" role="tabpanel" aria-labelledby="tab-stakeholders" hidden>
+                <div class="panel-content">
+                  <p>The project involves multiple teams, each playing a distinct role in ensuring its success:</p>
+
+                  <div class="role-list" aria-label="Stakeholders list">
+                    <div class="role-item">
+                      <div class="role">Decision-maker</div>
+                      <div class="role-details">
+                        <div class="stakeholders">Head of Performance Management (PM) Team</div>
+                        <div class="desc">Decides on marketing and risk strategies derived from the analysis.</div>
+                      </div>
+                    </div>
+
+                    <div class="role-item">
+                      <div class="role">Accountable</div>
+                      <div class="role-details">
+                        <div class="stakeholders">Project Manager (PM Team)</div>
+                        <div class="desc">Ensures the project meets objectives, aligns with business strategy, and delivers actionable insights.</div>
+                      </div>
+                    </div>
+
+                    <div class="role-item">
+                      <div class="role">Responsible</div>
+                      <div class="role-details">
+                        <div class="stakeholders">Data Analyst</div>
+                        <div class="desc">Conducts data cleaning, analysis, visualization, income calculation (gross &amp; net after fraud), and builds customer personas.</div>
+                      </div>
+                    </div>
+
+                    <div class="role-item">
+                      <div class="role">Consulted</div>
+                      <div class="role-details">
+                        <div class="stakeholders">Risk Management, Marketing, IT/Data Engineering</div>
+                        <div class="desc">Consulted on fraud detection and financial exposure; aligning personas with targeted campaigns; data extraction, infrastructure, and security.</div>
+                      </div>
+                    </div>
+
+                    <div class="role-item">
+                      <div class="role">Informed</div>
+                      <div class="role-details">
+                        <div class="stakeholders">Executive Management, Customer Service Team</div>
+                        <div class="desc">Kept informed on overall performance insights, revenue impact, fraud trends, and customer behavior insights that may affect service approaches.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Project Scope -->
+              <section class="tab-panel" id="panel-scope" role="tabpanel" aria-labelledby="tab-scope" hidden>
+                <div class="panel-content">
+                  <p>To achieve the objectives of analyzing RevoBank’s credit card usage and fraud impact, here is the dataset description and workflow:</p>
+                  <h4>Datasets</h4>
+                  <ul>
+                    <li><strong>Cards Dataset</strong>: Details of RevoBank credit cards and associated limits.</li>
+                    <li><strong>Users Dataset</strong>: Customer information including age and account details.</li>
+                    <li><strong>Transactions Dataset</strong>: Records of all credit card transactions over the past 6 months.</li>
+                    <li><strong>Fraud Dataset</strong>: Information on confirmed fraudulent transactions and their financial impact.</li>
+                  </ul>
+                  <h4>Workflow</h4>
+                  <ul>
+                    <li>Data Cleaning → Ensure quality datasets</li>
+                    <li>EDA → Explore trends &amp; fraud patterns</li>
+                    <li>Performance Summary → Track card usage &amp; revenue</li>
+                    <li>Income Calculation → Measure gross vs. net after fraud</li>
+                    <li>Segmentation → Build personas for targeting</li>
+                    <li>Visualization → Deliver actionable insights</li>
+                  </ul>
+                </div>
+              </section>
+
+              <!-- Problem Statement -->
+              <section class="tab-panel" id="panel-problem" role="tabpanel" aria-labelledby="tab-problem" hidden>
+                <div class="panel-content">
+                  <p>RevoBank needs to increase credit card usage among existing customers by analyzing 6 months of transaction and fraud data, aiming to improve revenue while reducing fraud related losses. The analysis will deliver actionable customer segments and revenue insights within the project timeline.</p>
+                </div>
+              </section>
+
+              <!-- KPIs -->
+              <section class="tab-panel" id="panel-kpis" role="tabpanel" aria-labelledby="tab-kpis" hidden>
+                <div class="panel-content">
+                  <p>To track the performance of RevoBank’s credit card products, the following KPIs measure usage, revenue, fraud impact, and customer segmentation:</p>
+                  <ul>
+                    <li>💳 <strong>Total Transaction Count (per Month)</strong>: measures overall card usage</li>
+                    <li>💰 <strong>Gross Revenue (IDR)</strong>: revenue generated from all transactions</li>
+                    <li>💵 <strong>Net Revenue after Fraud Losses (IDR)</strong>: shows real earnings after fraud impact</li>
+                    <li>⚠️ <strong>Fraud Rate (%)</strong>: percentage of transactions flagged as fraudulent</li>
+                    <li>📊 <strong>Customer Segmentation Metrics</strong>: usage frequency, average transaction value, fraud risk per segment</li>
+                    <li>🌟 <strong>Top Revenue Generating Customer Segments</strong>: supports targeted marketing and persona development</li>
+                  </ul>
+                </div>
+              </section>
             </div>
-            <p class="muted">Estimated share of transactions flagged as fraudulent.</p>
-          </article>
-          <article class="card">
-            <div class="pill">Impact</div>
-            <h3>Loss Estimate</h3>
-            <div class="metric">
-              <div class="value">$238k</div>
-              <div class="unit">USD</div>
-            </div>
-            <p class="muted">Aggregate loss linked to confirmed fraud this quarter.</p>
-          </article>
+          </div>
         </div>
       </section>
+
       <footer>
         Built with a lightweight, iOS-inspired glass UI in soft green.
       </footer>
     </main>
+
+    <script>
+      (function () {
+        var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.tab-list .tab'));
+        var panels = {};
+        tabButtons.forEach(function (btn) {
+          var panelId = btn.getAttribute('aria-controls');
+          panels[btn.id] = document.getElementById(panelId);
+        });
+        var panelsWrap = document.querySelector('.tab-panels');
+
+        function setHeightFromBackground() {
+          var bg = document.getElementById('panel-background');
+          var wasHidden = bg.hidden;
+          if (wasHidden) bg.hidden = false;
+          var h = bg.scrollHeight;
+          if (wasHidden) bg.hidden = true;
+          panelsWrap.style.height = h + 'px';
+        }
+
+        function activate(button) {
+          tabButtons.forEach(function (b) {
+            b.classList.remove('is-active');
+            b.setAttribute('aria-selected', 'false');
+            var p = panels[b.id];
+            if (p) p.hidden = true;
+          });
+          button.classList.add('is-active');
+          button.setAttribute('aria-selected', 'true');
+          var current = panels[button.id];
+          if (current) current.hidden = false;
+        }
+
+        function debounce(fn, wait) {
+          var t;
+          return function () { clearTimeout(t); t = setTimeout(fn, wait); };
+        }
+
+        tabButtons.forEach(function (btn, idx) {
+          btn.addEventListener('click', function () { activate(btn); });
+          btn.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+              e.preventDefault();
+              var dir = e.key === 'ArrowRight' ? 1 : -1;
+              var next = (idx + dir + tabButtons.length) % tabButtons.length;
+              activate(tabButtons[next]);
+              tabButtons[next].focus();
+            }
+          });
+        });
+
+        window.addEventListener('load', setHeightFromBackground);
+        window.addEventListener('resize', debounce(setHeightFromBackground, 150));
+        setTimeout(setHeightFromBackground, 300); // fonts/layout settle
+      })();
+    </script>
   </body>
 </html>
