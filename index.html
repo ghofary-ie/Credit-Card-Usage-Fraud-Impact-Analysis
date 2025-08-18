@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
     <title>Credit Card Usage &amp; Fraud Impact Analysis</title>
+
+    <!-- Prism CSS (syntax highlighting) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.min.css" />
+
     <style>
       :root {
         --accent-h: 152;
@@ -117,8 +121,20 @@
         color: rgba(15, 42, 30, 0.75);
       }
 
-      /* Tabs in a single glass card with fixed-height panel area */
-      .tabs { margin-top: 12px; }
+      .section-title {
+        margin: 18px 0 10px;
+        font-size: clamp(18px, 2.2vw, 22px);
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        background: linear-gradient(90deg, var(--accent-600), var(--accent-300));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+
+      /* Tabs */
+      .tabs { margin-top: 8px; }
       .card {
         position: relative;
         border-radius: var(--radius-lg);
@@ -130,6 +146,8 @@
         padding: 0;
         overflow: hidden;
       }
+      .card-body { padding: 16px 18px; }
+
       .tab-header {
         padding: 8px 10px;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.60), rgba(255, 255, 255, 0.35));
@@ -161,67 +179,92 @@
         box-shadow: 0 8px 20px rgba(16, 185, 129, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.35);
         border: 1px solid rgba(16, 185, 129, 0.45);
       }
-      .tab-panels {
-        padding: 16px 18px;
-        height: auto;            /* will be set to Project Background height by JS */
-        overflow: hidden;        /* keep box size fixed; inner panel scrolls */
-      }
-      .tab-panel {
-        height: 100%;
-        overflow-y: auto;        /* long tabs scroll inside */
-      }
+      .tab-panels { padding: 16px 18px; height: auto; overflow: hidden; }
+      .tab-panel { height: 100%; overflow-y: auto; }
       .tab-panel[hidden] { display: none; }
 
-      /* Consistent article typography */
-      .panel-content {
-        font-size: 15px;
-        line-height: 1.7;
-      }
-      .panel-content p,
-      .panel-content li {
-        font-size: inherit;
-        line-height: inherit;
-        text-align: justify;
-        text-justify: inter-word;
-        color: rgba(15, 42, 30, 0.78);
+      /* Content typography */
+      .panel-content { font-size: 15px; line-height: 1.7; }
+      .panel-content p, .panel-content li {
+        font-size: inherit; line-height: inherit; text-align: justify; text-justify: inter-word; color: rgba(15, 42, 30, 0.78);
       }
       .panel-content ul { margin: 10px 0 0 18px; }
       .panel-content li { margin: 6px 0; }
 
       /* Stakeholders list */
       .role-list {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 10px;
-        margin-top: 10px;
+        display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;
       }
       .role-item {
-        display: grid;
-        grid-template-columns: 160px 1fr;
-        gap: 12px;
-        padding: 12px;
-        border-radius: 12px;
+        display: grid; grid-template-columns: 160px 1fr; gap: 12px; padding: 12px; border-radius: 12px;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.35));
         border: 1px solid rgba(15, 42, 30, 0.12);
       }
       .role { font-weight: 800; color: var(--ink); }
       .role-details .stakeholders { font-weight: 700; color: rgba(15, 42, 30, 0.9); margin-bottom: 6px; }
       .role-details .desc { color: rgba(15, 42, 30, 0.78); }
+      @media (max-width: 640px) { .role-item { grid-template-columns: 1fr; } }
 
-      @media (max-width: 640px) {
-        .role-item { grid-template-columns: 1fr; }
+      /* EDA section */
+      .eda-intro {
+        font-size: 15px; line-height: 1.7; color: rgba(15, 42, 30, 0.78);
+        text-align: justify; text-justify: inter-word; margin: 0 0 18px;
       }
 
-      footer {
-        margin-top: 28px;
-        text-align: center;
-        color: rgba(15, 42, 30, 0.55);
-        font-size: 12px;
+      .stepper {
+        display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 18px 0 20px;
+      }
+      .step {
+        display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.60), rgba(255, 255, 255, 0.34));
+        border: 1px solid var(--glass-border); box-shadow: 0 6px 18px rgba(16, 185, 129, 0.12);
+      }
+      .step .emoji {
+        width: 36px; height: 36px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+        background: linear-gradient(180deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(16, 185, 129, 0.25);
+        font-size: 18px;
+      }
+      .step .step-text { display: flex; flex-direction: column; }
+      .step .step-title { font-weight: 800; color: var(--ink); letter-spacing: 0.1px; }
+      .step .step-desc { font-size: 12px; color: rgba(15, 42, 30, 0.65); }
+      .arrow {
+        width: 36px; height: 36px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+        background: linear-gradient(180deg, rgba(255,255,255,0.60), rgba(255,255,255,0.35)); border: 1px solid rgba(15, 42, 30, 0.12);
+        color: var(--accent-600); font-weight: 800; box-shadow: 0 4px 12px rgba(15, 42, 30, 0.08); user-select: none;
+      }
+      @media (max-width: 720px) { .stepper { flex-direction: column; align-items: stretch; } .arrow { transform: rotate(90deg); } }
+
+      /* Code chips (hover popovers) */
+      .code-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 10px; }
+      .chip {
+        position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.60), rgba(255,255,255,0.34)); border: 1px solid var(--glass-border);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.12); color: var(--ink);
+        font-weight: 400; font-size: 13px; letter-spacing: 0.1px; white-space: nowrap; cursor: default; -webkit-tap-highlight-color: transparent;
+      }
+      .chip:focus-within { outline: 2px solid rgba(16, 185, 129, 0.35); outline-offset: 2px; }
+      .popover {
+        position: absolute; z-index: 10; bottom: calc(100% + 10px); left: 0; width: min(420px, 84vw); padding: 12px 14px; border-radius: 14px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.70), rgba(255,255,255,0.42)); border: 1px solid rgba(255,255,255,0.55);
+        box-shadow: 0 14px 34px rgba(16, 185, 129, 0.22), 0 4px 14px rgba(15, 42, 30, 0.10);
+        backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%);
+        opacity: 0; transform: translateY(6px) scale(0.98); pointer-events: none; transition: opacity 160ms ease, transform 160ms ease;
+      }
+      .popover::after {
+        content: ""; position: absolute; top: 100%; left: 18px; border: 8px solid transparent; border-top-color: rgba(255,255,255,0.70);
+        filter: drop-shadow(0 2px 2px rgba(15,42,30,0.10));
+      }
+      .chip:hover .popover, .chip:focus-within .popover { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+      .popover .title { font-weight: 800; margin: 0 0 6px; color: var(--ink); letter-spacing: 0.1px; }
+      .popover pre {
+        margin: 0; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,0.55); border: 1px dashed rgba(15,42,30,0.15);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px; line-height: 1.6; color: #0a1f16; overflow: auto; max-height: 220px;
       }
 
-      @media (prefers-reduced-motion: reduce) {
-        .tab, .tab-list { transition: none; }
-      }
+      footer { margin-top: 28px; text-align: center; color: rgba(15, 42, 30, 0.55); font-size: 12px; }
+
+      @media (prefers-reduced-motion: reduce) { .tab, .tab-list { transition: none; } }
     </style>
   </head>
   <body>
@@ -230,10 +273,11 @@
         <span class="badge">Project</span>
         <h1 class="title">Credit Card Usage &amp; Fraud Impact Analysis</h1>
         <p class="author">Author: Abdul Ghofar – Data Analyst</p>
-        <p class="lead">This repository presents a comprehensive credit card usage and fraud analysis pipeline for RevoBank, aimed at optimizing revenue and minimizing losses from fraudulent transactions. Built with transactional data analytics, segmentation techniques, and advanced data visualization, the project covers transaction performance summaries, gross and net income calculations after fraud, and customer persona development based on spending patterns and fraud risk.</p>
+        <p class="lead">This repository presents a comprehensive credit card usage and fraud analysis pipeline for RevoBank, aimed at optimizing revenue and minimizing losses from fraudulent transactions. Built with transactional data analytics, segmentation techniques, and advanced data visualization, the project covers transaction performance summaries, gross and net income calculations after fraud, and customer persona development based on transaction patterns and fraud risk.</p>
         <p class="lead">The work demonstrates a data-driven approach to identifying high-value customer segments and potential fraud hotspots, supporting both strategic marketing initiatives and risk mitigation efforts for the bank’s performance management team.</p>
         <p class="subtitle">Glassmorphism interface in a soft green palette. Explore transaction patterns, surface anomalies, and quantify the impact of fraud.</p>
 
+        <h2 class="section-title">Project Intro</h2>
         <div class="tabs">
           <div class="card tab-surface">
             <div class="tab-header">
@@ -248,7 +292,6 @@
             </div>
 
             <div class="tab-panels">
-              <!-- Project Background -->
               <section class="tab-panel" id="panel-background" role="tabpanel" aria-labelledby="tab-background">
                 <div class="panel-content">
                   <p>RevoBank, a leading bank in Indonesia, aims to increase the usage of its credit card products among existing customers. As a data analyst working with the Performance Management (PM) team, the goal is to analyze customer transaction data over the past six months to better understand customer behavior and identify key segments for targeted marketing efforts.</p>
@@ -257,7 +300,6 @@
                 </div>
               </section>
 
-              <!-- Project Objective -->
               <section class="tab-panel" id="panel-objective" role="tabpanel" aria-labelledby="tab-objective" hidden>
                 <div class="panel-content">
                   <p>The primary objective of this project is to analyze the credit card transaction data of RevoBank customers over the past six months to:</p>
@@ -271,11 +313,9 @@
                 </div>
               </section>
 
-              <!-- Stakeholders -->
               <section class="tab-panel" id="panel-stakeholders" role="tabpanel" aria-labelledby="tab-stakeholders" hidden>
                 <div class="panel-content">
                   <p>The project involves multiple teams, each playing a distinct role in ensuring its success:</p>
-
                   <div class="role-list" aria-label="Stakeholders list">
                     <div class="role-item">
                       <div class="role">Decision-maker</div>
@@ -284,7 +324,6 @@
                         <div class="desc">Decides on marketing and risk strategies derived from the analysis.</div>
                       </div>
                     </div>
-
                     <div class="role-item">
                       <div class="role">Accountable</div>
                       <div class="role-details">
@@ -292,7 +331,6 @@
                         <div class="desc">Ensures the project meets objectives, aligns with business strategy, and delivers actionable insights.</div>
                       </div>
                     </div>
-
                     <div class="role-item">
                       <div class="role">Responsible</div>
                       <div class="role-details">
@@ -300,7 +338,6 @@
                         <div class="desc">Conducts data cleaning, analysis, visualization, income calculation (gross &amp; net after fraud), and builds customer personas.</div>
                       </div>
                     </div>
-
                     <div class="role-item">
                       <div class="role">Consulted</div>
                       <div class="role-details">
@@ -308,7 +345,6 @@
                         <div class="desc">Consulted on fraud detection and financial exposure; aligning personas with targeted campaigns; data extraction, infrastructure, and security.</div>
                       </div>
                     </div>
-
                     <div class="role-item">
                       <div class="role">Informed</div>
                       <div class="role-details">
@@ -320,7 +356,6 @@
                 </div>
               </section>
 
-              <!-- Project Scope -->
               <section class="tab-panel" id="panel-scope" role="tabpanel" aria-labelledby="tab-scope" hidden>
                 <div class="panel-content">
                   <p>To achieve the objectives of analyzing RevoBank’s credit card usage and fraud impact, here is the dataset description and workflow:</p>
@@ -343,14 +378,12 @@
                 </div>
               </section>
 
-              <!-- Problem Statement -->
               <section class="tab-panel" id="panel-problem" role="tabpanel" aria-labelledby="tab-problem" hidden>
                 <div class="panel-content">
                   <p>RevoBank needs to increase credit card usage among existing customers by analyzing 6 months of transaction and fraud data, aiming to improve revenue while reducing fraud related losses. The analysis will deliver actionable customer segments and revenue insights within the project timeline.</p>
                 </div>
               </section>
 
-              <!-- KPIs -->
               <section class="tab-panel" id="panel-kpis" role="tabpanel" aria-labelledby="tab-kpis" hidden>
                 <div class="panel-content">
                   <p>To track the performance of RevoBank’s credit card products, the following KPIs measure usage, revenue, fraud impact, and customer segmentation:</p>
@@ -367,11 +400,223 @@
             </div>
           </div>
         </div>
+
+        <h2 class="section-title">Exploratory Data Analysis</h2>
+        <div class="card eda-card">
+          <div class="card-body">
+            <p class="eda-intro">This section presents the process of preparing and analyzing RevoBank’s credit card datasets to uncover meaningful patterns and trends. It includes data cleaning to ensure accuracy and consistency, data exploration to understand transaction behaviors and customer characteristics, and insights that highlight key findings relevant to revenue, usage, and fraud risk.</p>
+
+            <div class="stepper" role="list" aria-label="EDA steps">
+              <div class="step" role="listitem" aria-label="Cleaning">
+                <div class="emoji">🧹</div>
+                <div class="step-text">
+                  <div class="step-title">Cleaning</div>
+                  <div class="step-desc">Validate, deduplicate, normalize</div>
+                </div>
+              </div>
+              <div class="arrow" aria-hidden="true">→</div>
+              <div class="step" role="listitem" aria-label="Exploratory Analysis">
+                <div class="emoji">🔎</div>
+                <div class="step-text">
+                  <div class="step-title">Exploratory Analysis</div>
+                  <div class="step-desc">Trends, distributions, anomalies</div>
+                </div>
+              </div>
+              <div class="arrow" aria-hidden="true">→</div>
+              <div class="step" role="listitem" aria-label="Insights and Observations">
+                <div class="emoji">💡</div>
+                <div class="step-text">
+                  <div class="step-title">Insights &amp; Observations</div>
+                  <div class="step-desc">Actionable findings</div>
+                </div>
+              </div>
+            </div>
+
+            <p class="eda-intro">Before diving into analysis, it’s important to go through the data cleaning phase, where we ensure the dataset is accurate, consistent, and ready for exploration. This step is crucial because any errors, missing values, or inconsistencies can lead to misleading insights later on. By cleaning the data first, we set a solid foundation for reliable exploratory analysis and meaningful findings. The detailed Python code used for this cleaning process is provided below.</p>
+
+            <div class="code-chips" role="list" aria-label="Cleaning snippets">
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Type conversion">
+                🔄 Type conversion
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Type conversion</div>
+                  <pre><code class="language-python"># Load files
+import pandas as pd
+import numpy as np
+
+users = pd.read_csv('/content/drive/MyDrive/25_FSDA_Barcelona_Abdul Ghofar/Python 25 Raw Data/INT_user_data.csv')
+cards = pd.read_csv('/content/drive/MyDrive/25_FSDA_Barcelona_Abdul Ghofar/Python 25 Raw Data/INT_card_data.csv')
+
+print(users.head())
+print(cards.head())
+
+users.info()
+cards.info()
+
+# ------- Change Card datatypes string/int64 etc -------
+
+cards['id'] = cards['id'].astype(str)
+cards['client_id'] = cards['client_id'].astype(str)
+cards['card_number'] = cards['card_number'].astype(str)
+
+cards['count_nonfraud_trx_L6M'] = cards['count_nonfraud_trx_L6M'].fillna(0).astype(int)
+cards['count_fraud_trx_L6M'] = cards['count_fraud_trx_L6M'].fillna(0).astype(int)
+cards['days_since_last_trx'] = cards['days_since_last_trx'].fillna(0).astype(int)
+
+def clean_currency(series):
+    return (
+        series.astype(str)
+        .str.replace('Rp', '', regex=False)
+        .str.replace('.', '', regex=False)
+        .str.strip()
+        .replace('nan', np.nan)
+        .astype(float)
+    )
+
+money_cols = [
+    'credit_limit',
+    'amt_nonfraud_trx_L6M',
+    'amt_fraud_trx_L6M'
+]
+
+for col in money_cols:
+    cards[col] = clean_currency(cards[col]).fillna(0)
+
+cards['acct_open_date'] = pd.to_datetime(cards['acct_open_date'], format='%m/%Y', errors='coerce')
+cards['expires'] = pd.to_datetime(cards['expires'], format='%m/%Y', errors='coerce')
+
+print(cards.head())
+
+cards.info()
+print(cards['id'].dtype)
+
+# ------- Change Users datatypes string/int64 etc -------
+
+print(users['birthdate'].head(10))
+print(users.dtypes)
+
+users['birthdate'] = pd.to_datetime(users['birthdate'], errors='coerce')
+
+print(users['birthdate'].head(10))
+print(users['birthdate'].isna().sum())
+
+print(users.dtypes)
+
+users['id'] = users['id'].astype(str)
+
+users.info()
+
+def clean_currency(series):
+    return (
+        series.astype(str)
+        .str.replace('Rp', '', regex=False)
+        .str.replace(r'\.', '', regex=True)
+        .str.strip()
+        .replace('nan', np.nan)
+        .astype(float)
+    )
+
+money_cols = ['per_capita_income', 'yearly_income', 'total_debt']
+
+for col in money_cols:
+    users[col] = clean_currency(users[col])
+
+print(users.dtypes)</code></pre>
+                </div>
+              </div>
+
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Data filtering">
+                🗂️ Data filtering
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Data filtering</div>
+                  <p class="muted" style="font-size:12px;margin:0 0 6px;">
+                    Inconsistent branding: "JCB", " Jcb ", "Visa ", Cleaned and uniform: "Jcb", "Visa" to ensures consistency, easier analysis
+                  </p>
+                  <pre><code class="language-python">categorical_cols = cards.select_dtypes(include='object').columns
+
+# Loop and check unique values
+for col in categorical_cols:
+    print(f"--- {col} ---")
+    print(cards[col].value_counts(dropna=False))
+    print("\n")
+
+print(cards['card_brand'])
+
+cards['card_brand'] = cards['card_brand'].str.strip().str.title()
+
+# print
+cards['card_brand'].value_counts(dropna=False)
+
+cards['card_brand'] = cards['card_brand'].replace('Jcb', 'JCB')</code></pre>
+                </div>
+              </div>
+
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Missing handling">
+                ⚠️ Missing handling
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Missing handling</div>
+                  <pre><code class="language-python">missing_percent = cards.isnull().mean() * 100
+print(missing_percent)
+
+missing_nonfraud = cards[cards['count_nonfraud_trx_L6M'].isna()]
+print(missing_nonfraud)
+
+missing_nonfraud = cards[cards['count_nonfraud_trx_L6M'].isna()]
+print(missing_nonfraud)
+
+missing_counts = cards[
+    cards['count_nonfraud_trx_L6M'].isna() |
+    cards['count_fraud_trx_L6M'].isna()
+]
+
+print(missing_counts)
+
+cards['count_nonfraud_trx_L6M'] = cards['count_nonfraud_trx_L6M'].fillna(0).astype(int)
+cards['count_fraud_trx_L6M'] = cards['count_fraud_trx_L6M'].fillna(0).astype(int)</code></pre>
+                </div>
+              </div>
+
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Duplicate removal">
+                🧹 Duplicate removal
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Duplicate removal</div>
+                  <pre><code class="language-python">duplicates = cards.duplicated()
+
+print(f"Number of duplicate rows: {duplicates.sum()}")
+
+cards = cards.drop_duplicates()
+
+print(cards.isnull().sum())</code></pre>
+                </div>
+              </div>
+
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Card removal">
+                💳 Card removal
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Card removal</div>
+                  <pre><code class="language-python">cards['expires'] = pd.to_datetime(cards['expires'])
+
+cutoff_date = pd.Timestamp('2025-04-30')
+
+cards = cards[cards['expires'] > cutoff_date]
+
+cards.reset_index(drop=True, inplace=True)
+
+print(f"Remaining cards after dropping expired: {len(cards)}")
+
+cards = cards[cards['credit_limit'] > 0]
+
+print(cards.head())
+
+cards.to_csv('cleaned_cards.csv', index=False)</code></pre>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </section>
 
-      <footer>
-        Built with a lightweight, iOS-inspired glass UI in soft green.
-      </footer>
+      <footer>Built with a lightweight, iOS-inspired glass UI in soft green.</footer>
     </main>
 
     <script>
@@ -426,8 +671,12 @@
 
         window.addEventListener('load', setHeightFromBackground);
         window.addEventListener('resize', debounce(setHeightFromBackground, 150));
-        setTimeout(setHeightFromBackground, 300); // fonts/layout settle
+        setTimeout(setHeightFromBackground, 300);
       })();
     </script>
+
+    <!-- Prism JS (syntax highlighting) -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
   </body>
 </html>
