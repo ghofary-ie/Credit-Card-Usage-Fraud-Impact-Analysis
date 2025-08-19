@@ -417,10 +417,12 @@
                         <div class="stakeholders">Executive Management, Customer Service Team</div>
                         <div class="desc">Kept informed on overall performance insights, revenue impact, fraud trends, and customer behavior insights that may affect service approaches.</div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
+                                </div>
+          </div>
+        </div>
+      </section>
+
+
 
               <section class="tab-panel" id="panel-scope" role="tabpanel" aria-labelledby="tab-scope" hidden>
                 <div class="panel-content">
@@ -995,9 +997,117 @@ print(brand_summary)</code></pre>
                   </div>
                 </div>
 
+            <hr class="divider" />
+
+            <div class="eda-subtitle"><strong>Exploratory Analysis – Retired vs Non Retired Users</strong></div>
+            <p class="eda-intro">We compared the debt to income (DTI) ratios total debt divided by yearly income between retired and non retired users. By grouping users based on retirement status and analyzing aggregate statistics, we can assess whether retired users carry higher financial risk, with the results visualized for clearer interpretation.</p>
+
+            <div class="code-chips" role="list" aria-label="Retired vs Non Retired Users code">
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Show code">
+                💻 Show code
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Analyze Retired vs Non Retired Users DTI</div>
+                  <pre><code class="language-python">import pandas as pd
+
+import seaborn as sns
+
+users = pd.read_csv('/content/drive/MyDrive/25_FSDA_Barcelona_Abdul Ghofar/Python 25 Raw Data/cleaned_users.csv')
+
+cutoff_date = pd.to_datetime('2025-04-30')
+
+users['age'] = (cutoff_date - users['birthdate']).dt.days // 365
+
+users['retired_flag'] = np.where(users['age'] >= users['retirement_age'], 1, 0)
+
+print(users ['retired_flag'])
+
+users['DTI'] = users['total_debt'] / users['yearly_income']
+
+print(users ['DTI'])
+
+users.info()
+
+dti_summary = users.groupby('retired_flag')['DTI'].agg(['count', 'mean', 'median', 'min', 'max', 'std'])
+print("DTI Summary by Retired Flag:")
+print(dti_summary)</code></pre>
+                </div>
+              </div>
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Statistic">
+                📊 Statistic
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">DTI Ratio Statistics</div>
+                  <div class="calc-scroll">
+                    <div class="calc-inner">
+                      <div class="math-formula">
+                        <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                          <thead>
+                            <tr style="background: var(--accent-300);">
+                              <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Retirement Status</th>
+                              <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Count</th>
+                              <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Mean DTI</th>
+                              <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Median DTI</th>
+                              <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Min</th>
+                              <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Max</th>
+                              <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Std Dev</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">Retired (1)</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">1,715</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.296</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.297</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.0</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.948</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.154</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">Non-Retired (0)</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">285</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.067</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.044</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.0</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.424</td>
+                              <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0.071</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="subsec-title" style="text-align: center;">DTI Analysis Visualization</div>
+            <div style="text-align: center; margin: 20px 0;">
+              <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+                <div style="font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 20px;">Debt to Income Ratio Comparison: Retired vs Non Retired Users</div>
+                
+                <!-- DTI Chart -->
+                <div id="dti-chart" class="plotly-graph-div" style="height:500px; width:100%;"></div>
+              </div>
+            </div>
+
+            <div class="insights-box">
+              <div class="subsec-title" style="margin:0; color: var(--accent-600);">Key Insights</div>
+              <div style="text-align: justify; line-height: 1.6;">
+                <div style="margin-bottom: 12px;">
+                  <div style="font-weight: 700; color: var(--ink); margin-bottom: 6px;">Financial Risk Assessment:</div>
+                  <div>Retired users have a higher average debt-to-income ratio (0.30) compared to non-retired users (0.07), meaning they owe more relative to what they earn. This shows that retired users might be more financially stretched, and the range of their DTI values is also wider, indicating more variation in financial situations among retirees.</div>
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: var(--ink); margin-bottom: 6px;">Credit Policy Implications:</div>
+                  <div>Understanding retirement status impact on debt management can inform credit policies, loan terms, and risk mitigation strategies for different customer segments.</div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
+
+
 
       <footer>Built with a lightweight, iOS-inspired glass UI in soft green.</footer>
     </main>
@@ -1063,6 +1173,9 @@ print(brand_summary)</code></pre>
     <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
     <!-- MathJax (LaTeX rendering) -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- DTI Chart Script -->
+    <script src="assets/dti-chart-script.html"></script>
   </body>
   </html>
 
