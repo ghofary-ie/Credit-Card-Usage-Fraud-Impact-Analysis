@@ -262,6 +262,64 @@
         font-size: 12px; line-height: 1.6; color: #0a1f16; overflow: auto; max-height: 220px;
       }
 
+      /* Net Profit section */
+      .divider { height: 1px; background: rgba(15,42,30,0.10); margin: 18px 0; border: 0; }
+
+      .eda-subtitle {
+        margin: 22px 0 10px;
+        font-weight: 800;
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--ink);
+      }
+
+      .subsec-title {
+        font-weight: 700;
+        font-size: 15px;
+        color: rgba(15, 42, 30, 0.9);
+        margin: 14px 0 6px;
+      }
+
+      .definition-list { margin: 0 0 8px 18px; }
+      .definition-list li { margin: 6px 0; }
+
+      .math-formula {
+        margin: 10px 0 12px;
+        text-align: center;
+      }
+
+      .values-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 8px 0 6px;
+      }
+      .value-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(255,255,255,0.38));
+        border: 1px solid var(--glass-border);
+        color: var(--ink);
+        line-height: 1.6;
+      }
+      .value-row .emoji { min-width: 22px; }
+      .value-row .label { font-weight: 700; }
+      .value-row .amount { font-weight: 800; }
+
+      .insights-box {
+        margin-top: 14px;
+        padding: 14px 14px 12px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(16,185,129,0.10));
+        border: 1px solid rgba(16,185,129,0.25);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12), inset 0 1px 0 rgba(255,255,255,0.48);
+      }
+      .insights-box ul { margin: 8px 0 0 18px; }
+      .insights-box li { margin: 6px 0; }
+
       footer { margin-top: 28px; text-align: center; color: rgba(15, 42, 30, 0.55); font-size: 12px; }
 
       @media (prefers-reduced-motion: reduce) { .tab, .tab-list { transition: none; } }
@@ -612,6 +670,105 @@ cards.to_csv('cleaned_cards.csv', index=False)</code></pre>
               </div>
             </div>
 
+            <hr class="divider" />
+
+            <div class="eda-subtitle"><strong>Exploratory Analysis – Net Profit</strong></div>
+            <p class="eda-intro">After completing the data cleaning phase, we explored RevoBank's transaction data to uncover patterns in promo performance, revenue generation, and fraud impact. This analysis provides insights into customer behavior, transaction trends, and net profit, addressing key business objectives.</p>
+
+            <!-- Show code chip before Key Definitions -->
+            <div class="code-chips" role="list" aria-label="Net profit code">
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Show code">
+                💻 Show code
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Calculate Net Profit (Last 6 Months)</div>
+                  <pre><code class="language-python">from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
+transactions = pd.read_pickle('/content/drive/MyDrive/25_FSDA_Barcelona_Abdul Ghofar/Python 25 Raw Data/transaction_data.pkl')
+fraud_labels = pd.read_pickle('/content/drive/MyDrive/25_FSDA_Barcelona_Abdul Ghofar/Python 25 Raw Data/fraud_label.pkl')
+
+today = datetime(2025, 3, 31)
+cutoff_date = today - relativedelta(months=6)
+transactions_last_6m = transactions[
+    (transactions['date'] > cutoff_date) & (transactions['date'] <= today)
+].copy()
+
+transactions_last_6m = transactions_last_6m.merge(
+    fraud_labels,
+    left_on='id',
+    right_on='transaction_id',
+    how='left'
+)
+
+transactions_last_6m['target'] = transactions_last_6m['target'].fillna('No')
+total_sales = transactions_last_6m['amount'].sum()
+
+total_fraud_amount = transactions_last_6m.loc[
+    transactions_last_6m['target'] == 'Yes',
+    'amount'
+].sum()
+
+mdr_rate = 0.015
+mdr_profit = total_sales * mdr_rate
+net_profit = mdr_profit - total_fraud_amount
+
+print(f"Cutoff Date: {cutoff_date.date()}")
+print(f"Total Sales Amount: Rp{total_sales:,.0f}")
+print(f"MDR Profit: Rp{mdr_profit:,.0f}")
+print(f"Total Fraud Amount: Rp{total_fraud_amount:,.0f}")
+print(f"Net Profit: Rp{net_profit:,.0f}")</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="subsec-title">Key Definitions</div>
+            <ul class="definition-list">
+              <li><strong>Total Sales Amount</strong>: Overall value of all credit card transactions.</li>
+              <li><strong>MDR Profit</strong>: Transaction fees earned by the bank (Total Sales × Merchant Discount Rate).</li>
+              <li><strong>Fraud Losses</strong>: Amount lost due to fraudulent transactions.</li>
+              <li><strong>Net Profit</strong>: MDR Profit minus Fraud Losses; represents actual revenue retained after accounting for fraud.</li>
+            </ul>
+
+            <div class="subsec-title">Net Profit Calculation</div>
+            <div class="subsec-title" style="margin-top:6px;">Formula</div>
+            <div class="math-formula">
+              \[
+                \text{Net Profit} = \big(\text{Total Sales Amount} \times \text{MDR}\big) - \text{Fraud Losses}
+              \]
+            </div>
+
+            <div class="subsec-title">Values</div>
+            <div class="values-stack">
+              <div class="value-row">
+                <span class="emoji">💰</span>
+                <span class="label">Total Sales Amount:</span>
+                <span class="amount">Rp454,475,789,500</span>
+              </div>
+              <div class="value-row">
+                <span class="emoji">📈</span>
+                <span class="label">MDR Profit (1.5%):</span>
+                <span class="amount">Rp6,817,136,842</span>
+              </div>
+              <div class="value-row">
+                <span class="emoji">⚠️</span>
+                <span class="label">Total Fraud Amount:</span>
+                <span class="amount">Rp1,050,679,200</span>
+              </div>
+              <div class="value-row">
+                <span class="emoji">✅</span>
+                <span class="label">Net Profit:</span>
+                <span class="amount">6,817,136,842 – 1,050,679,200 = Rp5,766,457,642</span>
+              </div>
+            </div>
+
+            <div class="insights-box">
+              <div class="subsec-title" style="margin:0; color: var(--accent-600);">Key Insights</div>
+              <ul>
+                <li>Fraud represents ~15% of MDR profit, indicating areas for improved risk management.</li>
+                <li>Net profit demonstrates the actual revenue retained after fraud, helping guide marketing and operational strategies.</li>
+              </ul>
+            </div>
+
           </div>
         </div>
       </section>
@@ -678,5 +835,7 @@ cards.to_csv('cleaned_cards.csv', index=False)</code></pre>
     <!-- Prism JS (syntax highlighting) -->
     <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+    <!-- MathJax (LaTeX rendering) -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </body>
 </html>
