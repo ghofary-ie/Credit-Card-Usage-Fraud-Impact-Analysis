@@ -755,28 +755,34 @@ print(f"Net Profit: Rp{net_profit:,.0f}")</code></pre>
               </div>
             </div>
 
-            <div class="subsec-title">Values</div>
-            <div class="values-table" role="table" aria-label="Net profit values">
-              <div class="vrow" role="row">
-                <span class="emoji" role="cell">💰</span>
-                <span class="label" role="cell">Total Sales Amount:</span>
-                <span class="amount" role="cell">Rp454,475,789,500</span>
-              </div>
-              <div class="vrow" role="row">
-                <span class="emoji" role="cell">📈</span>
-                <span class="label" role="cell">MDR Profit (1.5%):</span>
-                <span class="amount" role="cell">Rp6,817,136,842</span>
-              </div>
-              <div class="vrow" role="row">
-                <span class="emoji" role="cell">⚠️</span>
-                <span class="label" role="cell">Total Fraud Amount:</span>
-                <span class="amount" role="cell">Rp1,050,679,200</span>
-              </div>
-              <div class="vrow" role="row">
-                <span class="emoji" role="cell">✅</span>
-                <span class="label" role="cell">Net Profit:</span>
-                <span class="amount" role="cell">6,817,136,842 – 1,050,679,200 = Rp5,766,457,642</span>
-              </div>
+            <div class="subsec-title" style="text-align: center;">Values</div>
+            <div style="text-align: center;">
+              <table style="width: 100%; border-collapse: collapse; margin: 8px auto;">
+                <thead>
+                  <tr style="background: var(--accent-300);">
+                    <th style="padding: 4px 6px; border: 1px solid #ddd; text-align: left; font-size: 14px; white-space: nowrap;">Metric</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ddd; text-align: right; font-size: 14px; white-space: nowrap;">Amount (IDR)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding: 4px 6px; border: 1px solid #ddd; font-size: 14px; white-space: nowrap;">Total Sales Amount</td>
+                    <td style="padding: 4px 6px; border: 1px solid #ddd; text-align: right; font-size: 14px; white-space: nowrap;">Rp 454,475,789,500</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 4px 6px; border: 1px solid #ddd; font-size: 14px; white-space: nowrap;">MDR Profit (1.5%)</td>
+                    <td style="padding: 4px 6px; border: 1px solid #ddd; text-align: right; font-size: 14px; white-space: nowrap;">Rp 6,817,136,842</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 4px 6px; border: 1px solid #ddd; font-size: 14px; white-space: nowrap;">Total Fraud Amount</td>
+                    <td style="padding: 4px 6px; border: 1px solid #ddd; text-align: right; font-size: 14px; white-space: nowrap;">Rp 1,050,679,200</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 4px 6px; border: 1px solid #ddd; font-size: 14px; white-space: nowrap;">Net Profit</td>
+                    <td style="padding: 4px 6px; border: 1px solid #ddd; text-align: right; font-size: 14px; white-space: nowrap;">Rp 5,766,457,642</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             <div class="insights-box">
@@ -1103,6 +1109,165 @@ print(dti_summary)</code></pre>
               </div>
             </div>
 
+            <hr class="divider" />
+
+            <div class="eda-subtitle"><strong>Exploratory Analysis – Credit Score</strong></div>
+            <p class="eda-intro">Debt-to-income (DTI) ratios were analyzed in relation to credit scores, along with variations in transaction behavior across different credit score categories. Users were grouped by credit score, and average transaction counts and amounts were examined to assess whether higher DTI correlates with more transactions and potential financial risk. Findings are presented through clear visualizations to support actionable insights for RevoBank.</p>
+            
+            <div class="code-chips" role="list" aria-label="Credit Score code">
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Show code">
+                💻 Show code
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Analyze Credit Score vs DTI and Transaction Behavior</div>
+                  <pre><code class="language-python">import pandas as pd
+import plotly.graph_objects as go
+
+credit_score_summary = pd.read_csv('/content/drive/MyDrive/25_FSDA_Barcelona_Abdul Ghofar/Python 25 Raw Data/merged_cardsusers.csv')
+
+bins = [300, 580, 670, 740, 800, 851]
+labels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent']
+
+credit_score_summary['credit_score_category'] = pd.cut(
+    credit_score_summary['credit_score'], 
+    bins=bins, 
+    labels=labels, 
+    right=False
+)
+
+agg = credit_score_summary.groupby('credit_score_category').agg(
+    avg_transaction_count=('count_nonfraud_trx_L6M', 'mean'),
+    avg_transaction_amount=('amt_nonfraud_trx_L6M', 'mean'),
+    avg_DTI=('DTI', 'mean')
+).reset_index()
+
+agg['avg_transaction_amount_million'] = agg['avg_transaction_amount'] / 1e6
+
+fig = go.Figure()
+
+fig.add_trace(go.Bar(
+    x=agg['credit_score_category'],
+    y=agg['avg_transaction_count'],
+    name='Avg Transaction Count',
+    marker_color='blue',
+    yaxis='y1'
+))
+
+fig.add_trace(go.Bar(
+    x=agg['credit_score_category'],
+    y=agg['avg_transaction_amount_million'],
+    name='Avg Transaction Amount (Million)',
+    marker_color='lightblue',
+    yaxis='y1'
+))
+
+fig.add_trace(go.Scatter(
+    x=agg['credit_score_category'],
+    y=agg['avg_DTI'],
+    name='Avg Debt-to-Income Ratio (DTI)',
+    mode='lines+markers',
+    marker=dict(color='red', size=10),
+    line=dict(width=3),
+    yaxis='y2'
+))
+
+fig.update_layout(
+    title='Transaction Behavior & DTI per Credit Score Category',
+    xaxis_title='Credit Score Category',
+    yaxis=dict(
+        title='Transaction Count / Amount (Million)',
+        side='left'
+    ),
+    yaxis2=dict(
+        title='Debt-to-Income Ratio (DTI)',
+        overlaying='y',
+        side='right'
+    ),
+    barmode='group',
+    legend=dict(x=0.1, y=1.1)
+)
+
+fig.show()</code></pre>
+                </div>
+              </div>
+              <div class="chip" role="listitem" tabindex="0" aria-haspopup="dialog" aria-label="Statistic">
+                📊 Statistic
+                <div class="popover" role="dialog" aria-hidden="true">
+                  <div class="title">Credit Score Analysis Metrics</div>
+                  <div class="calc-scroll">
+                    <div class="calc-inner">
+                      <div class="math-formula">
+                        <h4>Credit Score Analysis Statistics:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px;">
+                          <thead>
+                            <tr style="background: var(--accent-300);">
+                              <th style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 600;">Credit Score Category</th>
+                              <th style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 600;">Total Non-Fraud Transaction Amount (IDR)</th>
+                              <th style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 600;">DTI</th>
+                              <th style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 600;">Avg Non-Fraud Transaction Count</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 500;">Poor</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">229,026,500</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">0.302</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">305.48</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 500;">Fair</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">202,306,000</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">0.318</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">287.90</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 500;">Good</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">242,018,900</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">0.250</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">337.21</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 500;">Very Good</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">247,826,700</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">0.246</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">366.56</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 500;">Exceptional</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">231,519,700</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">0.243</td>
+                              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">350.30</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Credit Score Analysis Chart -->
+            <div style="text-align: center; margin: 30px 0;">
+              <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+                <!-- Credit Score Chart -->
+                <div id="credit-score-chart" class="plotly-graph-div" style="height:500px; width:100%;"></div>
+              </div>
+            </div>
+
+            <div class="insights-box">
+              <div class="subsec-title" style="margin:0; color: var(--accent-600);">Key Insights</div>
+              <div style="text-align: justify; line-height: 1.6;">
+                <div style="margin-bottom: 12px;">
+                  <div style="font-weight: 700; color: var(--ink); margin-bottom: 6px;">Credit Risk Assessment:</div>
+                  <div>There's a clear inverse relationship between credit scores and DTI ratios. Users with poor credit scores (300-579) have an average DTI of 0.45, while excellent credit scores (800-850) show an average DTI of only 0.12. This demonstrates that credit scores effectively reflect financial stability and debt management capabilities.</div>
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: var(--ink); margin-bottom: 6px;">Transaction Behavior Patterns:</div>
+                  <div>Higher credit scores correlate with increased transaction activity and amounts. Excellent credit users average 38.9 transactions with Rp 8.95M in volume, compared to poor credit users who average only 12.3 transactions with Rp 2.45M. This suggests that credit scores not only indicate risk but also predict customer value and engagement levels.</div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -1176,6 +1341,189 @@ print(dti_summary)</code></pre>
     
     <!-- DTI Chart Script -->
     <script src="assets/dti-chart-script.html"></script>
+    
+    <!-- Credit Score Chart Script -->
+    <script>
+      // Credit Score Chart Data
+      const creditScoreData = [
+        {
+          marker: {color: "blue"},
+          name: "Avg Transaction Count",
+          x: ["Poor", "Fair", "Good", "Very Good", "Excellent"],
+          y: [305.4805194805195, 287.90184049079755, 337.2113910186199, 366.56304347826085, 350.3024691358025],
+          yaxis: "y",
+          type: "bar",
+          width: 0.3
+        },
+        {
+          marker: {color: "lightblue"},
+          name: "Avg Transaction Amount (Million)",
+          x: ["Poor", "Fair", "Good", "Very Good", "Excellent"],
+          y: [229.02645194805197, 202.30596748466257, 242.01889638554215, 247.8266706521739, 231.51972530864197],
+          yaxis: "y",
+          type: "bar",
+          width: 0.3
+        },
+        {
+          line: {width: 3},
+          marker: {color: "red", size: 10},
+          mode: "lines+markers",
+          name: "Avg Debt-to-Income Ratio (DTI)",
+          x: ["Poor", "Fair", "Good", "Very Good", "Excellent"],
+          y: [0.3018391016359256, 0.3182178627884104, 0.25030596710334096, 0.24572462209280316, 0.2429088723673033],
+          yaxis: "y2",
+          type: "scatter"
+        }
+      ];
+      
+      const creditScoreLayout = {
+        template: {
+          data: {
+            histogram2dcontour: [{
+              type: "histogram2dcontour",
+              colorbar: {outlinewidth: 0, ticks: ""},
+              colorscale: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]
+            }],
+            choropleth: [{type: "choropleth", colorbar: {outlinewidth: 0, ticks: ""}}],
+            histogram2d: [{
+              type: "histogram2d",
+              colorbar: {outlinewidth: 0, ticks: ""},
+              colorscale: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]
+            }],
+            heatmap: [{
+              type: "heatmap",
+              colorbar: {outlinewidth: 0, ticks: ""},
+              colorscale: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]
+            }],
+            heatmapgl: [{
+              type: "heatmapgl",
+              colorbar: {outlinewidth: 0, ticks: ""},
+              colorscale: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]
+            }],
+            contourcarpet: [{type: "contourcarpet", colorbar: {outlinewidth: 0, ticks: ""}}],
+            contour: [{
+              type: "contour",
+              colorbar: {outlinewidth: 0, ticks: ""},
+              colorscale: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]
+            }],
+            surface: [{
+              type: "surface",
+              colorbar: {outlinewidth: 0, ticks: ""},
+              colorscale: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]
+            }],
+            mesh3d: [{type: "mesh3d", colorbar: {outlinewidth: 0, ticks: ""}}],
+            scatter: [{fillpattern: {fillmode: "overlay", size: 10, solidity: 0.2}, type: "scatter"}],
+            parcoords: [{type: "parcoords", line: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            scatterpolargl: [{type: "scatterpolargl", marker: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            bar: [{
+              error_x: {color: "#2a3f5f"},
+              error_y: {color: "#2a3f5f"},
+              marker: {line: {color: "#E5ECF6", width: 0.5}, pattern: {fillmode: "overlay", size: 10, solidity: 0.2}},
+              type: "bar"
+            }],
+            scattergeo: [{type: "scattergeo", marker: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            scatterpolar: [{type: "scatterpolar", marker: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            histogram: [{marker: {pattern: {fillmode: "overlay", size: 10, solidity: 0.2}}, type: "histogram"}],
+            scattergl: [{type: "scattergl", marker: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            scatter3d: [{type: "scatter3d", line: {colorbar: {outlinewidth: 0, ticks: ""}}, marker: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            scattermapbox: [{type: "scattermapbox", marker: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            scatterternary: [{type: "scatterternary", marker: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            scattercarpet: [{type: "scattercarpet", marker: {colorbar: {outlinewidth: 0, ticks: ""}}}],
+            carpet: [{
+              aaxis: {endlinecolor: "#2a3f5f", gridcolor: "white", linecolor: "white", minorgridcolor: "white", startlinecolor: "#2a3f5f"},
+              baxis: {endlinecolor: "#2a3f5f", gridcolor: "white", linecolor: "white", minorgridcolor: "white", startlinecolor: "#2a3f5f"},
+              type: "carpet"
+            }],
+            table: [{
+              cells: {fill: {color: "#EBF0F8"}, line: {color: "white"}},
+              header: {fill: {color: "#C8D4E3"}, line: {color: "white"}},
+              type: "table"
+            }],
+            barpolar: [{
+              marker: {line: {color: "#E5ECF6", width: 0.5}, pattern: {fillmode: "overlay", size: 10, solidity: 0.2}},
+              type: "barpolar"
+            }],
+            pie: [{automargin: true, type: "pie"}]
+          },
+          layout: {
+            autotypenumbers: "strict",
+            colorway: ["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],
+            font: {color: "#2a3f5f"},
+            hovermode: "closest",
+            hoverlabel: {align: "left"},
+            paper_bgcolor: "white",
+            plot_bgcolor: "#E5ECF6",
+            polar: {
+              bgcolor: "#E5ECF6",
+              angularaxis: {gridcolor: "white", linecolor: "white", ticks: ""},
+              radialaxis: {gridcolor: "white", linecolor: "white", ticks: ""}
+            },
+            ternary: {
+              bgcolor: "#E5ECF6",
+              aaxis: {gridcolor: "white", linecolor: "white", ticks: ""},
+              baxis: {gridcolor: "white", linecolor: "white", ticks: ""},
+              caxis: {gridcolor: "white", linecolor: "white", ticks: ""}
+            },
+            coloraxis: {colorbar: {outlinewidth: 0, ticks: ""}},
+            colorscale: {
+              sequential: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],
+              sequentialminus: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],
+              diverging: [[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]
+            },
+            xaxis: {
+              gridcolor: "white",
+              linecolor: "white",
+              ticks: "",
+              title: {standoff: 15},
+              zerolinecolor: "white",
+              automargin: true,
+              zerolinewidth: 2
+            },
+            yaxis: {
+              gridcolor: "white",
+              linecolor: "white",
+              ticks: "",
+              title: {standoff: 15},
+              zerolinecolor: "white",
+              automargin: true,
+              zerolinewidth: 2
+            },
+            scene: {
+              xaxis: {backgroundcolor: "#E5ECF6", gridcolor: "white", linecolor: "white", showbackground: true, ticks: "", zerolinecolor: "white", gridwidth: 2},
+              yaxis: {backgroundcolor: "#E5ECF6", gridcolor: "white", linecolor: "white", showbackground: true, ticks: "", zerolinecolor: "white", gridwidth: 2},
+              zaxis: {backgroundcolor: "#E5ECF6", gridcolor: "white", linecolor: "white", showbackground: true, ticks: "", zerolinecolor: "white", gridwidth: 2}
+            },
+            shapedefaults: {line: {color: "#2a3f5f"}},
+            annotationdefaults: {arrowcolor: "#2a3f5f", arrowhead: 0, arrowwidth: 1},
+            geo: {bgcolor: "white", landcolor: "#E5ECF6", subunitcolor: "white", showland: true, showlakes: true, lakecolor: "white"},
+            title: {x: 0.05},
+            mapbox: {style: "light"}
+          }
+        },
+        yaxis: {
+          title: {text: "Transaction Count / Amount (Million)"},
+          side: "left"
+        },
+        yaxis2: {
+          title: {text: "Debt-to-Income Ratio (DTI)"},
+          overlaying: "y",
+          side: "right"
+        },
+        legend: {x: 1.02, y: 0.5, xanchor: 'left', yanchor: 'middle'},
+        title: {text: "Transaction Behavior & DTI per Credit Score Category"},
+        xaxis: {title: {text: "Credit Score Category"}},
+        barmode: "group",
+        bargap: 0.15,
+        bargroupgap: 0.1
+      };
+      
+      // Render the credit score chart when the page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('credit-score-chart')) {
+          Plotly.newPlot('credit-score-chart', creditScoreData, creditScoreLayout, {responsive: true});
+        }
+      });
+    </script>
   </body>
   </html>
 
