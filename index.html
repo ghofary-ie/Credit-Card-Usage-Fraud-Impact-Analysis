@@ -1139,7 +1139,7 @@ print(dti_summary)</code></pre>
                 <div style="font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 20px;">Debt to Income Ratio Comparison: Retired vs Non Retired Users</div>
                 
                 <!-- DTI Chart -->
-                <div id="dti-chart" class="plotly-graph-div" style="height:500px; width:100%;"></div>
+                <iframe src="assets/DTI chart.html" width="100%" height="500" style="border:none;"></iframe>
               </div>
             </div>
 
@@ -1298,7 +1298,7 @@ fig.show()</code></pre>
             <div style="text-align: center; margin: 30px 0;">
               <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
                 <!-- Credit Score Chart -->
-                <div id="credit-score-chart" class="plotly-graph-div" style="height:500px; width:100%;"></div>
+                <iframe src="assets/Credit_score.html" width="100%" height="500" style="border:none;"></iframe>
               </div>
             </div>
 
@@ -1481,7 +1481,7 @@ fig.show()</code></pre>
               <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
                 <div style="font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 20px;">Total Credit Limit by User Age</div>
                 <!-- Credit Limit Chart -->
-                <div id="credit-limit-chart" class="plotly-graph-div" style="height:500px; width:100%;"></div>
+                <iframe src="assets/Creditlimitbyage (1).html" width="100%" height="500" style="border:none;"></iframe>
               </div>
             </div>
 
@@ -1649,39 +1649,7 @@ fig.show()</code></pre>
     <!-- DTI Chart Script -->
     <script src="assets/dti-chart-script.html"></script>
     
-    <!-- Credit Score Chart Script -->
-    <script>
-      // Credit Score Chart Data
-      const creditScoreData = [
-        {
-          marker: {color: "blue"},
-          name: "Avg Transaction Count",
-          x: ["Poor", "Fair", "Good", "Very Good", "Excellent"],
-          y: [305.4805194805195, 287.90184049079755, 337.2113910186199, 366.56304347826085, 350.3024691358025],
-          yaxis: "y",
-          type: "bar",
-          width: 0.3
-        },
-        {
-          marker: {color: "lightblue"},
-          name: "Avg Transaction Amount (Million)",
-          x: ["Poor", "Fair", "Good", "Very Good", "Excellent"],
-          y: [229.02645194805197, 202.30596748466257, 242.01889638554215, 247.8266706521739, 231.51972530864197],
-          yaxis: "y",
-          type: "bar",
-          width: 0.3
-        },
-        {
-          line: {width: 3},
-          marker: {color: "red", size: 10},
-          mode: "lines+markers",
-          name: "Avg Debt-to-Income Ratio (DTI)",
-          x: ["Poor", "Fair", "Good", "Very Good", "Excellent"],
-          y: [0.3018391016359256, 0.3182178627884104, 0.25030596710334096, 0.24572462209280316, 0.2429088723673033],
-          yaxis: "y2",
-          type: "scatter"
-        }
-      ];
+
       
       const creditScoreLayout = {
         template: {
